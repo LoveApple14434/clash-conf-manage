@@ -2,5 +2,8 @@
 # Keep these rules under version control and edit them on your server.
 #
 # Examples:
-# DOMAIN-SUFFIX,example.com,🔰国外流量
+# DOMAIN-SUFFIX,example.com,PROXY
 # DOMAIN,api.example.org,DIRECT
+#
+# rules ended with "DIRECT" will be moved into dist/ruleset/custom-direct.yaml
+# other rules will be moved into dist/ruleset/custom-proxy.yaml
