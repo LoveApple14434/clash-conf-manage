@@ -1,0 +1,6 @@
+# One Clash rule per line. Blank lines and comments are ignored.
+# Keep these rules under version control and edit them on your server.
+#
+# Examples:
+# DOMAIN-SUFFIX,example.com,🔰国外流量
+# DOMAIN,api.example.org,DIRECT
