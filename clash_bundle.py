@@ -203,7 +203,11 @@ def split_rules_by_target(rules: list[Any]) -> tuple[list[str], list[str], list[
     return direct_rules, proxy_rules, passthrough_rules
 
 
-def build_provider_file(payload_rules: list[str]) -> dict[str, list[str]]:
+def build_proxy_provider_file(proxies: list[Any]) -> dict[str, list[Any]]:
+    return {"proxies": proxies}
+
+
+def build_rule_provider_file(payload_rules: list[str]) -> dict[str, list[str]]:
     return {"payload": payload_rules}
 
 
@@ -341,19 +345,19 @@ def build_files(inputs: BuildInputs) -> Path:
     )
 
     write_text(output_dir / inputs.managed_name, "#!MANAGED-CONFIG\n" + f"# Generated from: {inputs.source_url}\n" + f"# Generated at: {timestamp}\n" + dump_yaml(managed_config))
-    write_text(proxy_provider_dir / f"{DEFAULT_PROXY_PROVIDER_NAME}.yaml", dump_yaml(build_provider_file(proxies if isinstance(proxies, list) else [])))
-    write_text(ruleset_dir / f"{DEFAULT_DIRECT_RULE_PROVIDER_NAME}.yaml", dump_yaml(build_provider_file(source_direct_rules)))
-    write_text(ruleset_dir / f"{DEFAULT_PROXY_RULE_PROVIDER_NAME}.yaml", dump_yaml(build_provider_file(source_proxy_rules)))
-    write_text(ruleset_dir / f"{DEFAULT_CUSTOM_DIRECT_RULE_PROVIDER_NAME}.yaml", dump_yaml(build_provider_file(custom_direct_rules)))
-    write_text(ruleset_dir / f"{DEFAULT_CUSTOM_PROXY_RULE_PROVIDER_NAME}.yaml", dump_yaml(build_provider_file(custom_proxy_rules)))
+    write_text(proxy_provider_dir / f"{DEFAULT_PROXY_PROVIDER_NAME}.yaml", dump_yaml(build_proxy_provider_file(proxies if isinstance(proxies, list) else [])))
+    write_text(ruleset_dir / f"{DEFAULT_DIRECT_RULE_PROVIDER_NAME}.yaml", dump_yaml(build_rule_provider_file(source_direct_rules)))
+    write_text(ruleset_dir / f"{DEFAULT_PROXY_RULE_PROVIDER_NAME}.yaml", dump_yaml(build_rule_provider_file(source_proxy_rules)))
+    write_text(ruleset_dir / f"{DEFAULT_CUSTOM_DIRECT_RULE_PROVIDER_NAME}.yaml", dump_yaml(build_rule_provider_file(custom_direct_rules)))
+    write_text(ruleset_dir / f"{DEFAULT_CUSTOM_PROXY_RULE_PROVIDER_NAME}.yaml", dump_yaml(build_rule_provider_file(custom_proxy_rules)))
 
     custom_rules_output = output_dir / "custom-rules.txt"
     custom_rules_output.write_text(inputs.custom_rules_path.read_text(encoding="utf-8") if inputs.custom_rules_path.exists() else "", encoding="utf-8")
 
     write_text(output_dir / "base.yaml", dump_yaml({key: value for key, value in source_config.items() if key not in {"proxies", "proxy-groups", "rules"}}))
     write_text(output_dir / "nodes.yaml", dump_yaml({"proxies": proxies if isinstance(proxies, list) else []}))
-    write_text(output_dir / "source-rules-direct.yaml", dump_yaml(build_provider_file(source_direct_rules)))
-    write_text(output_dir / "source-rules-proxy.yaml", dump_yaml(build_provider_file(source_proxy_rules)))
+    write_text(output_dir / "source-rules-direct.yaml", dump_yaml(build_rule_provider_file(source_direct_rules)))
+    write_text(output_dir / "source-rules-proxy.yaml", dump_yaml(build_rule_provider_file(source_proxy_rules)))
 
     summary = {
         "source_url": inputs.source_url,
