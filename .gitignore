@@ -17,3 +17,5 @@ __pycache__/
 
 # Editor settings
 .vscode/
+
+custom-rules.txt
